@@ -1,16 +1,5 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
   "framework": "nextjs",
-  "env": {
-    "NEXT_PUBLIC_BASE_URL": "@next_public_base_url",
-    "ADMIN_EMAIL": "@admin_email",
-    "ADMIN_SECRET_KEY": "@admin_secret_key",
-    "CRON_SECRET": "@cron_secret"
-  },
-  "functions": {
-    "src/app/api/**": {
-      "maxDuration": 30
-    }
-  }
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next"
 }
