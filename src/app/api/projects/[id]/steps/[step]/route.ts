@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Project } from '@/types'
 import fs from 'fs/promises'
 import path from 'path'
-
-// 임시 데이터 저장소 (실제 환경에서는 데이터베이스 사용)
-const projects: { [key: string]: Project } = {}
+import { projectStorage } from '@/lib/storage'
 
 export async function POST(
   request: NextRequest,
@@ -13,7 +11,7 @@ export async function POST(
   try {
     const projectId = params.id
     const step = parseInt(params.step)
-    const project = projects[projectId]
+    const project = projectStorage.get(projectId)
 
     if (!project) {
       return NextResponse.json(
@@ -41,7 +39,7 @@ export async function POST(
     const completedSteps = Object.values(updatedProject.progress).filter(Boolean).length
     updatedProject.completionRate = Math.round((completedSteps / 7) * 100)
 
-    projects[projectId] = updatedProject
+    projectStorage.set(projectId, updatedProject)
 
     // 모든 단계 완료 시 알림
     if (updatedProject.completionRate === 100) {
@@ -60,7 +58,7 @@ export async function POST(
 
 // NAS에 단계별 데이터 저장
 async function saveStepDataToNAS(projectId: string, step: number, data: any) {
-  const project = projects[projectId]
+  const project = projectStorage.get(projectId)
   if (!project) return
 
   const folderNames = {

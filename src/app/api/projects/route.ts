@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 import { Project } from '@/types'
 import { nasClient } from '@/lib/nas'
-
-// 임시 데이터 저장소 (실제 환경에서는 데이터베이스 사용)
-const projects: { [key: string]: Project } = {}
+import { projectStorage } from '@/lib/storage'
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +32,7 @@ export async function POST(request: NextRequest) {
       completionRate: 0,
     }
 
-    projects[projectId] = newProject
+    projectStorage.set(projectId, newProject)
 
     // NAS에 프로젝트 폴더 구조 생성
     try {
@@ -57,7 +55,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // 모든 프로젝트 목록 반환 (관리자용)
-    const projectList = Object.values(projects)
+    const projectList = projectStorage.getAll()
     return NextResponse.json(projectList)
   } catch (error) {
     console.error('Error fetching projects:', error)

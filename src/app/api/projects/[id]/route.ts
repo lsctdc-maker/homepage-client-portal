@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Project } from '@/types'
-
-// 임시 데이터 저장소 (실제 환경에서는 데이터베이스 사용)
-const projects: { [key: string]: Project } = {}
+import { projectStorage } from '@/lib/storage'
 
 export async function GET(
   request: NextRequest,
@@ -10,7 +8,7 @@ export async function GET(
 ) {
   try {
     const projectId = params.id
-    const project = projects[projectId]
+    const project = projectStorage.get(projectId)
 
     if (!project) {
       return NextResponse.json(
@@ -35,7 +33,7 @@ export async function PUT(
 ) {
   try {
     const projectId = params.id
-    const project = projects[projectId]
+    const project = projectStorage.get(projectId)
 
     if (!project) {
       return NextResponse.json(
@@ -51,7 +49,7 @@ export async function PUT(
       updatedAt: new Date(),
     }
 
-    projects[projectId] = updatedProject
+    projectStorage.set(projectId, updatedProject)
     return NextResponse.json(updatedProject)
   } catch (error) {
     console.error('Error updating project:', error)
