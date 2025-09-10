@@ -1,13 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
+  // appDir is now default in Next.js 14, removed experimental flag
 }
 
 module.exports = nextConfig
