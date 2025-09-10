@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
 import { motion } from 'framer-motion'
@@ -17,6 +17,28 @@ export default function Step7Form({ project, onComplete }: Step7FormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<{ [category: string]: FileInfo[] }>({})
   const [activeCategory, setActiveCategory] = useState('01_기업정보')
+
+  // 프로젝트 데이터가 변경될 때 업로드된 파일 복원
+  useEffect(() => {
+    console.log('📄 Step7Form: 프로젝트 데이터 변경 감지', project)
+    
+    const existingData = project.step7Data
+    
+    if (existingData) {
+      console.log('🔄 Step7Form: 기존 저장된 파일 데이터로 복원', existingData)
+      
+      // uploadedFiles 상태 복원
+      const restoredFiles: { [category: string]: FileInfo[] } = {}
+      existingData.uploadedFiles.forEach(categoryData => {
+        restoredFiles[categoryData.category] = categoryData.files
+      })
+      
+      setUploadedFiles(restoredFiles)
+    } else {
+      console.log('🆕 Step7Form: 빈 상태로 초기화')
+      setUploadedFiles({})
+    }
+  }, [project])
 
   const onDrop = useCallback(async (acceptedFiles: File[], category: string) => {
     for (const file of acceptedFiles) {

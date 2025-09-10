@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -30,16 +30,36 @@ export default function Step3Form({ project, onComplete }: Step3FormProps) {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid }
   } = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
-    mode: 'onChange',
+    mode: 'onTouched',
     defaultValues: {
       mailRecords: [
         { type: 'MX', host: '', value: '', priority: 10 }
       ]
     }
   })
+
+  // 프로젝트 데이터가 변경될 때 폼 업데이트
+  useEffect(() => {
+    console.log('📄 Step3Form: 프로젝트 데이터 변경 감지', project)
+    
+    const existingData = project.step3Data
+    
+    if (existingData) {
+      console.log('🔄 Step3Form: 기존 저장된 데이터로 폼 업데이트', existingData)
+      reset(existingData)
+    } else {
+      console.log('🆕 Step3Form: 기본값으로 폼 초기화')
+      reset({
+        mailRecords: [
+          { type: 'MX', host: '', value: '', priority: 10 }
+        ]
+      })
+    }
+  }, [project, reset])
 
   const { fields, append, remove } = useFieldArray({
     control,

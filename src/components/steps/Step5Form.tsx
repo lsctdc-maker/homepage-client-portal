@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -28,16 +28,36 @@ export default function Step5Form({ project, onComplete }: Step5FormProps) {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isValid }
   } = useForm<Step5Data>({
     resolver: zodResolver(step5Schema),
-    mode: 'onChange',
+    mode: 'onTouched',
     defaultValues: {
       references: [
         { site: '', templateName: '', description: '' }
       ]
     }
   })
+
+  // 프로젝트 데이터가 변경될 때 폼 업데이트
+  useEffect(() => {
+    console.log('📄 Step5Form: 프로젝트 데이터 변경 감지', project)
+    
+    const existingData = project.step5Data
+    
+    if (existingData) {
+      console.log('🔄 Step5Form: 기존 저장된 데이터로 폼 업데이트', existingData)
+      reset(existingData)
+    } else {
+      console.log('🆕 Step5Form: 기본값으로 폼 초기화')
+      reset({
+        references: [
+          { site: '', templateName: '', description: '' }
+        ]
+      })
+    }
+  }, [project, reset])
 
   const { fields, append, remove } = useFieldArray({
     control,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -29,10 +29,11 @@ export default function Step6Form({ project, onComplete }: Step6FormProps) {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors, isValid }
   } = useForm<Step6Data>({
     resolver: zodResolver(step6Schema),
-    mode: 'onChange',
+    mode: 'onTouched',
     defaultValues: {
       menuStructure: {
         primaryMenu: ['ABOUT US', 'BUSINESS', 'PRODUCT', 'NOTICE', 'CONTACT'],
@@ -46,6 +47,32 @@ export default function Step6Form({ project, onComplete }: Step6FormProps) {
       }
     }
   })
+
+  // 프로젝트 데이터가 변경될 때 폼 업데이트
+  useEffect(() => {
+    console.log('📄 Step6Form: 프로젝트 데이터 변경 감지', project)
+    
+    const existingData = project.step6Data
+    
+    if (existingData) {
+      console.log('🔄 Step6Form: 기존 저장된 데이터로 폼 업데이트', existingData)
+      reset(existingData)
+    } else {
+      console.log('🆕 Step6Form: 기본값으로 폼 초기화')
+      reset({
+        menuStructure: {
+          primaryMenu: ['ABOUT US', 'BUSINESS', 'PRODUCT', 'NOTICE', 'CONTACT'],
+          secondaryMenu: {
+            'ABOUT US': ['회사소개', '조직도', '연혁', '오시는길'],
+            'BUSINESS': ['홈페이지', '카탈로그', '영상'],
+            'PRODUCT': ['제품 카테고리1', '제품 카테고리2'],
+            'NOTICE': ['공지사항', '언론보도', '갤러리'],
+            'CONTACT': ['온라인 문의']
+          }
+        }
+      })
+    }
+  }, [project, reset])
 
   const { fields: primaryFields, append: appendPrimary, remove: removePrimary } = useFieldArray({
     control,

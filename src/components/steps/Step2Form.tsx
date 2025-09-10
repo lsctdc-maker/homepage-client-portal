@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -34,11 +34,54 @@ export default function Step2Form({ project, onComplete }: Step2FormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid }
+    formState: { errors, isValid },
+    reset
   } = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
-    mode: 'onChange'
+    mode: 'onTouched',
+    defaultValues: {
+      hosting: {
+        provider: '',
+        id: '',
+        password: '',
+        ftpDbPassword: '',
+      },
+      domain: {
+        provider: '',
+        address: '',
+        id: '',
+        password: '',
+      }
+    }
   })
+
+  // 프로젝트 데이터가 변경될 때 폼 업데이트
+  useEffect(() => {
+    console.log('📄 Step2Form: 프로젝트 데이터 변경 감지', project)
+    
+    const existingData = project.step2Data
+    
+    if (existingData) {
+      console.log('🔄 Step2Form: 기존 저장된 데이터로 폼 업데이트', existingData)
+      reset(existingData)
+    } else {
+      console.log('🆕 Step2Form: 기본값으로 폼 초기화')
+      reset({
+        hosting: {
+          provider: '',
+          id: '',
+          password: '',
+          ftpDbPassword: '',
+        },
+        domain: {
+          provider: '',
+          address: '',
+          id: '',
+          password: '',
+        }
+      })
+    }
+  }, [project, reset])
 
   const onSubmit = async (data: Step2Data) => {
     setIsSubmitting(true)
