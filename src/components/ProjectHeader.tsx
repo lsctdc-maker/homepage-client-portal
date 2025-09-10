@@ -52,7 +52,7 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
               </div>
             </div>
 
-            <div className="w-16 h-16">
+            <div className="w-16 h-16 relative">
               <svg className="transform -rotate-90 w-16 h-16">
                 <circle
                   cx="32"
@@ -75,7 +75,7 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
                   className="text-tong-blue transition-all duration-500"
                 />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-xs font-semibold text-gray-700">
                   {project.completionRate}%
                 </span>

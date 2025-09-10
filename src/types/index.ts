@@ -18,6 +18,14 @@ export interface Project {
     step7: boolean; // 홈페이지 자료
   };
   completionRate: number;
+  // 단계별 저장된 데이터
+  step1Data?: Step1Data;
+  step2Data?: Step2Data;
+  step3Data?: Step3Data;
+  step4Data?: Step4Data;
+  step5Data?: Step5Data;
+  step6Data?: Step6Data;
+  step7Data?: Step7Data;
 }
 
 // 단계별 데이터 타입

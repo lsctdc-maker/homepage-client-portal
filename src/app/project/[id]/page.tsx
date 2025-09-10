@@ -45,6 +45,7 @@ export default function ProjectPage() {
   }
 
   const handleStepComplete = async (stepNumber: number, data: any) => {
+    console.log(`🎯 ProjectPage: ${stepNumber}단계 완료 처리 시작`, data)
     try {
       const response = await fetch(`/api/projects/${projectId}/steps/${stepNumber}`, {
         method: 'POST',
@@ -56,6 +57,7 @@ export default function ProjectPage() {
 
       if (response.ok) {
         const updatedProject = await response.json()
+        console.log('✅ ProjectPage: 프로젝트 업데이트 성공', updatedProject)
         setProject(updatedProject)
         
         // 다음 미완성 단계로 자동 이동
@@ -63,12 +65,21 @@ export default function ProjectPage() {
           !updatedProject.progress[`step${index + 1}`]
         ) + 1
         
+        console.log('🚀 ProjectPage: 다음 단계로 이동:', nextIncompleteStep)
+        
         if (nextIncompleteStep > 0 && nextIncompleteStep <= STEPS.length) {
           setCurrentStep(nextIncompleteStep)
+        } else {
+          // 모든 단계가 완료된 경우
+          console.log('🎉 ProjectPage: 모든 단계 완료!')
         }
+      } else {
+        console.error('❌ ProjectPage: API 응답 오류:', response.status)
+        const errorData = await response.json()
+        console.error('Error details:', errorData)
       }
     } catch (error) {
-      console.error('Error saving step data:', error)
+      console.error('❌ ProjectPage: 단계 저장 오류:', error)
     }
   }
 

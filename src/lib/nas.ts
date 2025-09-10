@@ -115,6 +115,13 @@ export class NASClient {
 
     const projectFolderName = `${companyName}_${new Date().toISOString().split('T')[0]}_${projectId.slice(0, 8)}`
     
+    // NAS가 설정되지 않았거나 연결할 수 없는 경우 로컬에서만 작업
+    if (!this.client || !this.config.host) {
+      console.log(`📁 NAS not configured - Project folder structure planned: ${projectFolderName}`)
+      console.log(`📋 Folders would be created: ${folderStructure.join(', ')}`)
+      return projectFolderName
+    }
+    
     try {
       // 프로젝트 메인 폴더 생성
       await this.ensureDirectory(projectFolderName)
@@ -130,7 +137,9 @@ export class NASClient {
       
     } catch (error) {
       console.error('Failed to create project folder structure:', error)
-      throw error
+      // NAS 오류가 발생해도 프로젝트 생성은 계속 진행
+      console.log(`⚠️ NAS error occurred but continuing with local project: ${projectFolderName}`)
+      return projectFolderName
     }
   }
 

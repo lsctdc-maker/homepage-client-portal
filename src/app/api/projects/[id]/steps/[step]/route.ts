@@ -32,6 +32,7 @@ export async function POST(
         ...project.progress,
         [`step${step}`]: true,
       },
+      [`step${step}Data`]: stepData, // 단계 데이터를 프로젝트에 저장
       updatedAt: new Date(),
     }
 

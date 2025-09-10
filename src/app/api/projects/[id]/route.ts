@@ -8,15 +8,26 @@ export async function GET(
 ) {
   try {
     const projectId = params.id
+    console.log(`🔍 API: Searching for project: ${projectId}`)
+    
+    // 저장소 디버그 정보 출력
+    projectStorage.debug()
+    
     const project = projectStorage.get(projectId)
 
     if (!project) {
+      console.error(`❌ Project not found: ${projectId}`)
       return NextResponse.json(
-        { error: 'Project not found' },
+        { 
+          error: 'Project not found',
+          projectId: projectId,
+          message: '프로젝트를 찾을 수 없습니다. 프로젝트 ID를 확인해주세요.'
+        },
         { status: 404 }
       )
     }
 
+    console.log(`✅ Project found: ${project.companyName}`)
     return NextResponse.json(project)
   } catch (error) {
     console.error('Error fetching project:', error)

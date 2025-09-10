@@ -34,11 +34,13 @@ export async function POST(request: NextRequest) {
 
     projectStorage.set(projectId, newProject)
 
-    // NAS에 프로젝트 폴더 구조 생성
+    // NAS에 프로젝트 폴더 구조 생성 (실패해도 프로젝트 생성 계속 진행)
     try {
-      await nasClient.createProjectFolder(projectId, companyName)
+      const folderName = await nasClient.createProjectFolder(projectId, companyName)
+      console.log(`📁 Project folder prepared: ${folderName}`)
     } catch (error) {
-      console.error('Failed to create NAS folder:', error)
+      console.error('⚠️ Failed to create NAS folder:', error)
+      console.log('✅ Continuing with project creation (NAS is optional)')
       // NAS 폴더 생성 실패해도 프로젝트는 생성
     }
 
